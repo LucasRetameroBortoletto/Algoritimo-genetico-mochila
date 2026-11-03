@@ -1,69 +1,53 @@
-# 🎒 Algoritmo Genético - Problema da Mochila (Knapsack Problem)
+# Algoritmo Genético - Problema da Mochila
 
-Este projeto é uma implementação em C++ que aplica os conceitos base de **Algoritmos Genéticos** para resolver uma variação do clássico **Problema da Mochila** (Knapsack Problem). 
+Implementação em C++ dos operadores básicos de um algoritmo genético, aplicados a uma variação do Problema da Mochila (Knapsack Problem).
 
-O programa recebe um conjunto de indivíduos iniciais (soluções representadas por números inteiros de 16 bits), avalia o peso e o valor total de cada um e, em seguida, aplica funções genéticas (Cruzamento e Mutação) para gerar e avaliar novos indivíduos.
+O programa recebe 6 soluções iniciais, calcula o valor e o peso de cada uma e gera 4 novas soluções por meio de cruzamento e mutação. Toda a lógica é feita com operações bit a bit.
 
-## 🚀 Funcionalidades e Técnicas Utilizadas
+> **Alcance do projeto:** o programa executa uma única rodada de operadores, sem seleção nem várias gerações. Portanto, ele não busca a melhor combinação de itens.
 
-* **Manipulação de Bits (Bitwise):** Os itens da mochila são representados pelos bits de um número inteiro (`unsigned short` de 16 bits). A verificação da presença de cada item é feita inteiramente através de operações lógicas bit a bit.
-* **Operadores Genéticos Implementados:**
-  * Cruzamento de Ponto Único
-  * Cruzamento Aritmético
-  * Mutação Simples
-  * Mutação Dupla
-* **Avaliação de Fitness:** Calcula se a mochila ultrapassou o peso limite e soma o valor dos itens coletados.
-* **Interface via Terminal (CLI):** O programa conta com uma formatação visual rica utilizando **Códigos de Escape ANSI** para cores (Verde para soluções válidas, Vermelho para inválidas) e a biblioteca `<iomanip>` para alinhamento perfeito de colunas.
+## Como funciona
 
-## 📁 Estrutura do Projeto
+### Representação das soluções
 
-* `main.cpp` - Ponto de entrada do programa, gerencia a entrada de dados, chama as funções genéticas e formata a saída no console.
-* `Genetico.cpp` / `Genetico.h` - Contém as implementações dos operadores de cruzamento e mutação.
-* `Binario.cpp`/ `Binario.h` - Auxiliares para visualização ou manipulação em nível de bit.
+Cada solução é um número de 16 bits (de 0 a 65535), e cada bit indica se um item está na mochila: 1 significa que está, e 0, que não está. Uma solução é válida quando o peso total não passa de **20 kg**.
 
-## 🛠️ Como Compilar e Executar
+| Bit | Peso (kg) | Valor (R$) |
+|---:|---:|---:|
+| 0 | 1 | 12 |
+| 1 | 4 | 4 |
+| 2 | 2 | 3 |
+| 3 | 5 | 10 |
+| 4 | 4 | 15 |
+| 5 | 2 | 20 |
+| 6 | 1 | 10 |
+| 7 | 4 | 2 |
+| 8 | 3 | 1 |
+| 9 | 2 | 1 |
+| 10 | 1 | 3 |
+| 11 | 9 | 15 |
+| 12 | 4 | 10 |
+| 13 | 5 | 8 |
+| 14 | 3 | 4 |
+| 15 | 12 | 4 |
 
-Certifique-se de ter um compilador C++ instalado (como o GCC/MinGW).
+**Exemplo:** a solução `12329` em binário é `0011 0000 0010 1001`, com os bits 0, 3, 5, 12 e 13 ligados.
 
-1. Clone o repositório (para quem for baixar e testar o projeto)/Baixar pasta:
-   ```bash
-   git clone https://github.com/LucasRetameroBortoletto/Algoritimo-genetico-mochila.git
-   ```
-2. Navegue até a pasta do projeto e compile os arquivos:
-   ```bash
-   g++ *.cpp -o genetico
-   ```
-3. Execute o programa:
-   * No Windows: `genetico.exe`
-   * No Linux/Mac: `./genetico`
+- **Peso:** 1 + 5 + 2 + 4 + 5 = 17 kg
+- **Valor:** 12 + 10 + 20 + 10 + 8 = R$ 60
+- **Resultado:** solução válida, pois 17 kg não passa do limite
 
-## 💻 Exemplo de Uso
+### Operadores genéticos
 
-Ao iniciar o programa, ele solicitará a entrada de 6 números inteiros (entre 0 e 65535) que representam as soluções da primeira geração.
+| Operador | Soluções usadas | O que faz |
+|---|---|---|
+| Cruzamento de ponto único | 1 e 2 | Junta os 8 bits altos da solução 1 com os 8 bits baixos da solução 2 |
+| Cruzamento aritmético | 3 e 4 | Aplica um AND bit a bit entre as duas soluções |
+| Mutação simples | 5 | Inverte o bit 9 |
+| Mutação dupla | 6 | Inverte os bits 12 e 3 |
 
-**Entrada:**
-```text
-Entre com 6 soluções iniciais: 60504 25000 12329 38054 1259 732
-```
+## Estrutura do projeto
 
-**Saída Esperada no Terminal:**
-```text
-Resultado da Avaliacao
--------------------------
-60504 - 69R$ - 40Kg - X
-25000 - 45R$ - 22Kg - X
-12329 - 60R$ - 17Kg - OK
-38054 - 46R$ - 29Kg - X
- 1259 - 61R$ - 18Kg - OK
-  732 - 41R$ - 18Kg - OK
--------------------------
-60584 - 66R$ - 41Kg - X
- 4128 - 30R$ -  6Kg - OK
- 1771 - 62R$ - 20Kg - OK
- 4820 - 41R$ - 17Kg - OK
-```
-*(Nota: No console real, os "OK" e "X" aparecem formatados em verde e vermelho).*
-
-## 🎓 Contexto
-Projeto desenvolvido com o objetivo de fixar os conceitos de algoritmos genéticos (operadores bit a bit) limitando o uso de estruturas de repetição (foco em lógica booleana sequencial).
-   
+- `MainMochila.cpp`: lê as soluções, chama os operadores e exibe os resultados.
+- `Genetico.cpp` / `Genetico.h`: contêm os operadores genéticos e a função de avaliação.
+- `Binario.cpp` / `Binario.h`: contêm as operações em nível de bit, como ligar, desligar e testar bits, AND, OR e as
